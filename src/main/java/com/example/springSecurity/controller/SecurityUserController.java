@@ -3,12 +3,15 @@ package com.example.springSecurity.controller;
 import java.io.File;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -73,5 +76,15 @@ public class SecurityUserController {
 		   model.addAttribute("msg", "끝났다. 로그인");
 		   model.addAttribute("url", "/ss/user/login");
 		   return "common/alertMsg";
+	}
+	
+	@ResponseBody
+	@GetMapping("/loginSuccess")
+	public String loginSuccess() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		// 세션의 현재 사용자 아이디
+		String uid = authentication.getName();
+		
+		return "loginSuccess - " + uid;
 	}
 }
