@@ -18,7 +18,7 @@ public class SecurityConfig {
 			.headers(x -> x.frameOptions(y -> y.disable()))			// CK Editor image upload
 			.authorizeHttpRequests(auth -> auth
 					.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-					.requestMatchers("/user/login", "/user/logout", "/user/register",
+					.requestMatchers("/user/register",
 							"/img/**", "/css/**", "/js/**", "/error/**").permitAll()
 					.requestMatchers("/admin/**").hasAuthority("ADMIN")
 					.anyRequest().authenticated()

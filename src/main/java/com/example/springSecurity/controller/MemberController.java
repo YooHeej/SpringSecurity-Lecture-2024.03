@@ -19,16 +19,16 @@ public class MemberController {
 		return "";
 	}
 	
-	@GetMapping("/insert")
-	public String insert() {
-		Member m1 = new Member ();
-		m1.setName("james");m1.setEmail("lebron23@g.com");
-		
-		// Builder pattern
-		Member m2 = Member.builder()
-						.name("maria").email("mari@g.com");
-						.build();
-		return "";
-	}
-	
+//	@GetMapping("/insert")
+//	public String insert() {
+//		Member m1 = new Member ();
+//		m1.setName("james");m1.setEmail("lebron23@g.com");
+//		
+////		// Builder pattern
+////		Member m2 = Member.builder()
+////						.name("maria").email("mari@g.com");
+////						.build();
+////		return "";
+//	}
+//	
 }
