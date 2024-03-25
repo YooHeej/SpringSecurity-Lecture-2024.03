@@ -18,4 +18,6 @@ public interface SecurityUserService {
 	void updateSecurityUser(SecurityUser securityUser);
 	
 	void deleteSecurityUser(String uid);
+	
+	
 }

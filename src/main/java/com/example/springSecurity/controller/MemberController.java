@@ -8,27 +8,45 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.springSecurity.entity.Member;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 @RequestMapping("/member")
 public class MemberController {
 	
 	@ResponseBody
-	@GetMapping("/deatil/{mid}")
+	@GetMapping("/detail/{mid}")
 	public String detail(@PathVariable int mid) {
 		Member member = new Member();
+		log.info("detail");
 		return "";
 	}
 	
-//	@GetMapping("/insert")
-//	public String insert() {
-//		Member m1 = new Member ();
-//		m1.setName("james");m1.setEmail("lebron23@g.com");
-//		
-////		// Builder pattern
-////		Member m2 = Member.builder()
-////						.name("maria").email("mari@g.com");
-////						.build();
-////		return "";
-//	}
-//	
+	@ResponseBody
+	@GetMapping("/insert")
+	public String insert() {
+		Member m1 = new Member ();
+		m1.setName("james");m1.setEmail("james@ggg");
+		log.info(m1.toString());
+		
+		// Builder pattern
+		Member m2 = Member.builder()
+						.name("maria").email("maria@naver.com")
+						.build();
+		log.info(m2.toString());
+		
+		return m1.toString() + "<br>" + m2.toString();
+	}
+	
+	@ResponseBody
+	@GetMapping("/update")
+	public String update() {
+		Member member = Member.builder()
+							.mid(1).name("Brian").email("brian@human.com")
+							.build();
+		log.info(member.toString());
+		
+		return member.toString();
+	}
 }
