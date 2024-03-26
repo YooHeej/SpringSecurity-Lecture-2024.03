@@ -19,13 +19,13 @@
         
           <div class="modal-body">
             <form action="/ss/user/update" method="post" enctype="multipart/form-data">
-              <input type="hidden" name="suid" id="suid">
+              <input type="hidden" name="uid" id="uid">
               <input type="hidden" name="hashedPwd" id="hashedPwd">
-              <input type="hidden" name="profile" id="profile">
+              <input type="hidden" name="picture" id="picture">
               <table class="table table-borderless">
                 <tr>
                   <td style="width: 30%; text-align: center;"><label class="col-form-label">사용자 ID</label></td>
-                  <td style="width: 35%;"><input type="text" name="uid" id="uid" class="form-control"></td>
+                  <td style="width: 35%;"><input type="text" id="uid2" class="form-control" disabled></td>
                   <td style="width: 35%;" rowspan="2"><img id="imgSrc" width="100%"></td>
                 </tr>
                 <tr>
@@ -50,18 +50,7 @@
                   <td style="text-align: center;"><label class="col-form-label">프로파일</label></td>
                   <td colspan="2"><input type="file" name="newProfile" class="form-control"></td>
                 </tr>
-								<tr>
-                  <td style="text-align: center;"><label class="col-form-label">깃허브</label></td>
-                  <td colspan="2"><input type="text" name="github" id="github" class="form-control"></td>
-                </tr>
-								<tr>
-                  <td style="text-align: center;"><label class="col-form-label">인스타그램</label></td>
-                  <td colspan="2"><input type="text" name="insta" id="insta" class="form-control"></td>
-                </tr>
-								<tr>
-                  <td style="text-align: center;"><label class="col-form-label">지역</label></td>
-                  <td colspan="2"><input type="text" name="location" id="location" class="form-control"></td>
-                </tr>
+					
                 <tr>
                   <td colspan="3" style="text-align: right;">
                     <button class="btn btn-primary me-1" type="submit">수정</button>

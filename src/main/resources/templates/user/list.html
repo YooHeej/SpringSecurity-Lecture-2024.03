@@ -6,21 +6,18 @@
 		function uidClick(uid) {
 			$.ajax({
 				type: 'GET',
-				url: '/sbbs/user/detail/' + uid,
+				url: '/ss/user/detail/' + uid,
 				success: function(jsonUser) {
 					let user = JSON.parse(jsonUser);
 					$('#imgSrc').attr({src: user.picture});
-					$('#suid').val(user.suid);
 					$('#uid').val(user.uid);
+					$('#uid2').val(user.uid);
 					$('#hashedPwd').val(user.pwd);
 					$('#uname').val(user.uname);
 					$('#email').val(user.email);
 					$('#provider').val(user.provider);
 					$('#role').val(user.role);
 					$('#picture').val(user.picture);
-					$('#github').val(user.github);
-					$('#insta').val(user.insta);
-					$('#location').val(user.location);
 					$('#detailModal').modal('show');
 				}
 			});
@@ -29,7 +26,7 @@
 			let uid = $('#uid').val();
 			const answer = confirm('정말로 삭제하시겠습니까?');
 			if (answer)
-				location.href = '/sbbs/user/delete/' + uid;
+				location.href = '/ss/user/delete/' + uid;
 		}
 	</script>
 </head>
