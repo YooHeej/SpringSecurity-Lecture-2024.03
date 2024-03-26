@@ -27,13 +27,13 @@
 					</ul>
 					<ul class="navbar-nav ms-auto">
 						<li class="nav-item ms-3">
-							<a class="nav-link" th:classappend="${menu eq 'board' ? 'active' : ''}" href="/ss/board/list"><i class="far fa-list-alt"></i> 게시판</a>
+							<a class="nav-link" th:classappend="${menu eq 'board' ? 'active' : ''}" href="#"><i class="far fa-list-alt"></i> 게시판</a>
 						</li>
 						<li class="nav-item ms-3">
-							<a class="nav-link"  th:classappend="${menu eq 'user' ? 'active' : ''}" href="#"><i class="fas fa-user-friends"></i> 사용자</a>
+							<a class="nav-link"  th:classappend="${menu eq 'user' ? 'active' : ''}" href="/ss/user/list"><i class="fas fa-user-friends"></i> 사용자</a>
 						</li>
 						<li class="nav-item ms-3">
-							<a class="nav-link" th:classappend="${menu eq 'schedule' ? 'active' : ''}" href="/ss/schedule/calendar"><i class="fa-solid fa-calendar-days"></i> 스케쥴</a>
+							<a class="nav-link" th:classappend="${menu eq 'schedule' ? 'active' : ''}" href="#"><i class="#"></i> 스케쥴</a>
 						</li>
 						<li class="nav-item ms-3">
 							<span th:if="${session.sessUid}">
@@ -43,15 +43,10 @@
 								<a class="nav-link" href="/ss/user/login"><i class="fas fa-sign-in-alt"></i> 로그인</a>
 							</span>
 						</li>
-						<li class="nav-item ms-3">
+						</ul>
 						<span th:if="${session.sessUid}">
 							<span class="navbar-text me-3">[[${session.sessUname}]]님 환영합니다.</span>
 						</span>
-						<span th:unless="${session.sessUid}">
-							<a class="nav-link" href="/ss/user/register"><i class="fa-solid fa-circle-user"></i> 회원 가입</a>
-						</span>
-						</li>
-					</ul>
 				</div>
 			</nav>
 		</header>
@@ -62,7 +57,7 @@
 			<div class="col-3">
 				<aside th:fragment="aside">
 					<div th:if="${session.picture}">
-						<img th:src="@{/file/picture/{x}(x=${session.picture})}" class="rounded-circle" width="90%">
+						<img th:src="${session.picture}" class="rounded-circle" width="90%">
 					</div>
 					<div th:unless="${session.picture}">
 						<img src="/ss/img/person.jpg" class="rounded-circle" width="90%">
@@ -85,7 +80,7 @@
 						<i class="fa-solid fa-location-dot me-2"></i> [[${session.location}]]
 							<a href="#" id="getWeatherButton"><span class="badge bg-secondary">날씨</span></a><br>
 						<div id="weather"></div>	
-						<button class="btn btn-sm btn-outline-primary mt-3">Edit picture</button>
+						<!--<button class="btn btn-sm btn-outline-primary mt-3">Edit Profile</button> -->
 					</div>
 				</aside>
 			</div>
