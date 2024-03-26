@@ -1,34 +1,46 @@
 package com.example.springSecurity.controller;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.example.springSecurity.entity.SecurityUser;
 import com.example.springSecurity.service.SecurityUserService;
+import com.example.springSecurity.util.AsideUtil;
 import com.example.springSecurity.util.ImageUtil;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class SecurityUserController {
 	private final SecurityUserService securityService;
 	private final BCryptPasswordEncoder bCryptEncoder;
+	private final ResourceLoader resourceLoader;
 	private final ImageUtil imageUtil;
+	private final AsideUtil asideUtil;
 	@Value("${spring.servlet.multipart.location}") private String uploadDir;
+	private String menu = "user";
 	
 	@GetMapping("/login")
 	public String login() {
@@ -78,13 +90,57 @@ public class SecurityUserController {
 		   return "common/alertMsg";
 	}
 	
-	@ResponseBody
 	@GetMapping("/loginSuccess")
-	public String loginSuccess() {
+	public String loginSuccess(HttpSession session, Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		// 세션의 현재 사용자 아이디
 		String uid = authentication.getName();
 		
-		return "loginSuccess - " + uid;
+		// 세션에 필요한 값 설정
+		SecurityUser securityUser = securityService.getUserByUid(uid);
+		session.setAttribute("sessUid", uid);
+		session.setAttribute("sessUname", securityUser.getUname());
+		session.setAttribute("picture", securityUser.getPicture());
+		session.setAttribute("email", securityUser.getEmail());
+		
+		// 상태 메시지
+		Resource resource = resourceLoader.getResource("classpath:/static/data/todayQuote.txt");
+		String quoteFile = null;
+		try {
+			quoteFile = resource.getURI().getPath();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String stateMsg = asideUtil.getTodayQuote(quoteFile);
+		session.setAttribute("stateMsg", stateMsg);
+		
+		// 환영 메세지
+		log.info("Info Login: {}, {}", uid, securityUser.getUname());
+		model.addAttribute("msg", securityUser.getUname()+"님 환영합니다.");
+		model.addAttribute("url", "/ss/user/list");
+		
+		return "common/alertMsg";
 	}
+	
+	@GetMapping({"/list/{page}", "/list"})
+	public String list(@PathVariable(required=false) Integer page, HttpSession session, Model model) {
+		page = (page == null) ? 1 : page;
+		session.setAttribute("currentUserPage", page);
+		List<SecurityUser> list = securityService.getSecurityUserList(page);
+		model.addAttribute("userList", list);
+		
+		// for pagination
+		int totalUsers = securityService.getSecurityUserCount();
+		int totalPages = (int) Math.ceil(totalUsers * 1.0 / SecurityUserService.COUNT_PER_PAGE);
+		List<Integer> pageList = new ArrayList<>();
+		for (int i = 1; i <= totalPages; i++)
+			pageList.add(i);
+		model.addAttribute("pageList", pageList);
+		model.addAttribute("menu", menu);
+		
+		return "user/list";
+	}
+
+		
+	
 }
