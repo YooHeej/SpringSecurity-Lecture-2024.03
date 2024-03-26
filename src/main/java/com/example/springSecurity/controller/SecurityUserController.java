@@ -160,6 +160,52 @@ public class SecurityUserController {
 		return jUser.toString();
 	}
 	
+	@PostMapping("/update")
+	public String update(String uid, String pwd, String pwd2, String uname, String email,
+						String hashedPwd, String picture, String provider, String role,
+						MultipartHttpServletRequest req, HttpSession session, Model model) {
+		System.out.println("hashedPwd=" + hashedPwd + ", provider=" + provider);
+		String filename = null;
+		SecurityUser securityUser = null;
+		int currentUserPage = (Integer) session.getAttribute("currentUserPage");
+		MultipartFile filePart = req.getFile("newProfile");
+		String sessUid = (String) session.getAttribute("sessUid");
+		
+		if (!sessUid.equals(uid)) {
+			model.addAttribute("msg", "수정 권한이 없다.");
+			model.addAttribute("url", "/ss/user/list/" + currentUserPage);
+			return "common/alertMsg";
+		}
+		if (provider.equals("admin")) {		// Local 등록자
+			if (pwd != null && pwd.length() > 1 && pwd.equals(pwd2))
+				hashedPwd = bCryptEncoder.encode("pwd");
+			if (filePart.getContentType().contains("image")) {
+					// 기존 사진 지우기
+					int idx = picture.lastIndexOf("/");
+					String path = uploadDir + "profile/" + picture.substring(idx + 1);
+					File file = new File(path);
+					file.delete();
+					
+					filename = filePart.getOriginalFilename();
+					path = uploadDir + "profile/" + filename;
+					try {
+						filePart.transferTo(new File(path));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					picture = "/ss/file/download/profile/" + imageUtil.squareImage(uid, filename);
+				}
+				securityUser = SecurityUser.builder()
+								.uid(uid).pwd(hashedPwd).uname(uname).email(email).picture(picture)
+								.provider(provider).role(role).build();
+				session.setAttribute("sessUname", uname);
+				session.setAttribute("picture", picture);
+				session.setAttribute("email", email);
+		}
+		securityService.updateSecurityUser(securityUser);
+		return "redirect:/user/list/" + currentUserPage;
+	}
+	
 		
 	
 }
