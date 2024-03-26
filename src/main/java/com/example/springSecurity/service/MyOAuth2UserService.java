@@ -7,6 +7,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import com.example.springSecurity.entity.MyUserDetails;
 import com.example.springSecurity.entity.SecurityUser;
 
 import lombok.RequiredArgsConstructor;
@@ -27,13 +28,26 @@ public class MyOAuth2UserService extends DefaultOAuth2UserService{
 		SecurityUser securityUser = null;
 		
 		OAuth2User oAuth2User = super.loadUser(userRequest);
-		log.info("getAttribute(): " + oAuth2User.getAuthorities());
+		log.info("getAttribute(): " + oAuth2User.getAttributes());
 		String provider = userRequest.getClientRegistration().getRegistrationId();
 		switch (provider) {
 		case "google":
 			break;
 		case "github":
 			int id = oAuth2User.getAttribute("id");
+			uid = provider + "_" + id;
+			securityUser = securityService.getUserByUid(uid);
+		if (securityUser == null) {		// 가입이 되어있지 않으므로 가입 진행
+			uname = oAuth2User.getAttribute("name");
+			email = oAuth2User.getAttribute("email");
+			picture = oAuth2User.getAttribute("avatar_url");
+			securityUser = SecurityUser.builder()
+					.uid(uid).pwd(hashedPwd).uname(uname).email(email).picture(picture)
+					.provider(provider).build();
+			securityService.insertSecurityUser(securityUser);
+			securityUser = securityService.getUserByUid(uid);
+			log.info("깃허브 계정을 통해 회원가입이 됐다.");
+		}
 			break;
 		case "naver":
 			break;
@@ -42,7 +56,7 @@ public class MyOAuth2UserService extends DefaultOAuth2UserService{
 		}
 		
 		
-		return super.loadUser(userRequest);
+		return new MyUserDetails(securityUser, oAuth2User.getAttributes());
 	}
 
 }
